@@ -111,10 +111,10 @@ rm -rf $RPM_BUILD_ROOT
 #        DESTDIR=$RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT%{dest}/domains\
-	   %{?with_ucspi:$RPM_BUILD_ROOT/etc/vpopmail/} \
-	   $RPM_BUILD_ROOT%{_sbindir} \
-	   $RPM_BUILD_ROOT%{_includedir}/vpopmail \
-	   $RPM_BUILD_ROOT{%{_docdir},%{_libdir}}
+	%{?with_ucspi:$RPM_BUILD_ROOT/etc/vpopmail/} \
+	$RPM_BUILD_ROOT%{_sbindir} \
+	$RPM_BUILD_ROOT%{_includedir}/vpopmail \
+	$RPM_BUILD_ROOT{%{_docdir},%{_libdir}}
 
 install vpopmail.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail
 install config.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail
