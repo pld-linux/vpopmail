@@ -1,26 +1,24 @@
-# TODO: uid/gid 70 are reserved for other purposes (uid_gid.db.txt)
-#       update (at least 5.3.4 was available some time ago)
-
-# TODO: give them some descriptive comments
-%bcond_with ldap
-%bcond_with mysql
-%bcond_without sqweb
-%bcond_with ucspi
-
+#
+# Conditional build:
+%bcond_with	ldap	# with LDAP support
+%bcond_with	mysql	# with MySQL support
+%bcond_without	sqweb	# don't use sqwebmail
+%bcond_with	ucspi	# use ucspi-tcp
+#
 Summary:	Virtual domains for qmail
 Summary(es):	Dominios virtuales para qmail
 Summary(pl):	Domeny wirtualne dla qmaila
 Name:		vpopmail
-Version:	5.3.3
-Release:	0.2
+Version:	5.4.0
+%define	bver	rc1
+Release:	0.%{bver}.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
-# Source0-md5:	fa7c7d46c673da7e955311d618f6302e
+Source0:	http://dl.sourceforge.net/vpopmail/%{name}-%{version}-%{bver}.tar.gz
+# Source0-md5:	3a9edac0e60e4fb1e06d009bd11ade3b
 Patch0:		%{name}-nonroot.patch
-Patch1:		%{name}-vmysql.patch
-Patch2:		%{name}-missing-qmail.patch
-URL:		http://inter7.com/vpopmail/
+Patch1:		%{name}-missing-qmail.patch
+URL:		http://inter7.com/vpopmail.html
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_mysql:BuildRequires:	mysql-devel}
@@ -39,7 +37,8 @@ Requires:	qmail-pop3
 %{?with_ucspi:Requires:	ucspi-tcp >= 0.88}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define	varqmail	/var/qmail
+%define		varqmail	/var/qmail
+%define		dest		/var/lib/vpopmail
 
 %description
 vpopmail is a collection of programs to automate creation and
@@ -64,21 +63,18 @@ Group:		Development/Libraries
 #Requires:	%{name}-libs = %{version}
 
 %description devel
-The vpopmail package contains all the include files.
+This package contains header files for vpopmail library.
 
 %description devel -l es
 El paquete vpopmail contiene todos los ficheros de inclusión.
 
 %description devel -l pl
-Pakiet zawiera pliki nag³ówkowe.
-
-%define         dest		/var/lib/vpopmail
+Ten pakiet zawiera pliki nag³ówkowe biblioteki vpopmail.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-%{bver}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %{__aclocal}
@@ -135,22 +131,22 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`getgid vchkpw`" ]; then
-	if [ "`getgid vchkpw`" != "70" ]; then
-		echo "Error: group vpopmail doesn't have gid=70. Correct this before installing vpopmail." 1>&2
+	if [ "`getgid vchkpw`" != "121" ]; then
+		echo "Error: group vchkpw doesn't have gid=121. Correct this before installing vpopmail." 1>&2
 		exit 1
 	fi
 else
-	echo "Adding group vchkpw GID=70."
-	/usr/sbin/groupadd -g 70 vchkpw || exit 1
+	echo "Adding group vchkpw GID=121."
+	/usr/sbin/groupadd -g 121 vchkpw || exit 1
 fi
 if [ -n "`id -u named 2>/dev/null`" ]; then
-	if [ "`id -u vpopmail`" != "70" ]; then
-		echo "Error: user vpopmail doesn't have uid=70. Correct this before installing vpopmail." 1>&2
+	if [ "`id -u vpopmail`" != "121" ]; then
+		echo "Error: user vpopmail doesn't have uid=121. Correct this before installing vpopmail." 1>&2
 		exit 1
 	fi
 else
-	echo "Adding user vpopmail UID=70."
-	/usr/sbin/useradd -u 70 -g 70 -d /dev/null -s /bin/false -c "VPOPMAIL user" vpopmail || exit 1
+	echo "Adding user vpopmail UID=121."
+	/usr/sbin/useradd -u 121 -g 121 -d /dev/null -s /bin/false -c "VPOPMAIL user" vpopmail || exit 1
 fi
 
 %postun
@@ -163,13 +159,13 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog FAQ NEWS TODO UPGRADE UPGRADE.tren README.* doc/doc_html doc/man_html ldap oracle
+%doc AUTHORS ChangeLog FAQ README* UPGRADE doc/doc_html doc/man_html ldap oracle
 %attr(755,vpopmail,vchkpw) %{_sbindir}/*
 %dir %{dest}
 %attr(700,vpopmail,vchkpw) %dir %{dest}/domains
-%{?with_ucspi: %attr(700,vpopmail,vchkpw) %dir /etc/vpopmail}
+%{?with_ucspi:%attr(700,vpopmail,vchkpw) %dir /etc/vpopmail}
 
 %files devel
 %defattr(644,root,root,755)
+%{_libdir}/libvpopmail.a
 %{_includedir}/vpopmail
-%attr(755,root,root) %{_libdir}/libvpopmail.a
