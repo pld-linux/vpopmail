@@ -24,17 +24,20 @@ BuildRequires:	automake
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
 %{?with_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
+BuildRequires:	rpmbuild(macros) >= 1.159
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 %{?with_ldap:Requires:	openldap}
 Requires:	qmail >= 1.03
 Requires:	qmail-pop3
 %{?with_sqweb:Requires:	sqwebmail >= 3.0}
 %{?with_ucspi:Requires:	ucspi-tcp >= 0.88}
+Provides:	group(vchkpw)
+Provides:	user(vpopmail)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		varqmail	/var/qmail
@@ -130,8 +133,8 @@ install libvpopmail.a $RPM_BUILD_ROOT%{_libdir}
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`getgid vchkpw`" ]; then
-	if [ "`getgid vchkpw`" != "121" ]; then
+if [ -n "`/usr/bin/getgid vchkpw`" ]; then
+	if [ "`/usr/bin/getgid vchkpw`" != "121" ]; then
 		echo "Error: group vchkpw doesn't have gid=121. Correct this before installing vpopmail." 1>&2
 		exit 1
 	fi
@@ -139,8 +142,8 @@ else
 	echo "Adding group vchkpw GID=121."
 	/usr/sbin/groupadd -g 121 vchkpw || exit 1
 fi
-if [ -n "`id -u named 2>/dev/null`" ]; then
-	if [ "`id -u vpopmail`" != "121" ]; then
+if [ -n "`/bin/id -u named 2>/dev/null`" ]; then
+	if [ "`/bin/id -u vpopmail`" != "121" ]; then
 		echo "Error: user vpopmail doesn't have uid=121. Correct this before installing vpopmail." 1>&2
 		exit 1
 	fi
@@ -151,10 +154,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	echo "Removing user vpopmail."
-	/usr/sbin/userdel vpopmail
-	echo "Removing group vpopmail."
-	/usr/sbin/groupdel vchkpw
+	%userremove vpopmail
+	%groupremove vchkpw
 fi
 
 %files
