@@ -17,6 +17,8 @@ Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
 # Source0-md5:	fa7c7d46c673da7e955311d618f6302e
 Patch0:		%{name}-nonroot.patch
 URL:		http://inter7.com/vpopmail/
+BuildRequires:	autoconf
+BuildRequires:	automake
 %{!?_without_mysql:BuildRequires:	mysql-devel}
 %{!?_without_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	qmail >= 1.03
