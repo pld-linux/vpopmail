@@ -1,83 +1,104 @@
---- vpopmail-5.3.3/configure.in.orig	Tue Mar  4 18:16:22 2003
-+++ vpopmail-5.3.3/configure.in	Wed Mar  5 17:05:28 2003
-@@ -33,14 +33,6 @@
-   ;;
- esac
+--- vpopmail-5.4.0-rc1/configure.in.orig	Fri Jan  2 07:08:25 2004
++++ vpopmail-5.4.0-rc1/configure.in	Thu Jan 15 12:04:20 2004
+@@ -88,16 +88,6 @@
+ 
+ #----------------------------------------------------------------------
  
 -if test `$idcommand` != "0"
 -then
--    AC_MSG_WARN(=== vpopmail must be configured as root. ===)
--    AC_MSG_WARN(=== please switch to the root user and  ===)
--    AC_MSG_WARN(=== run ./configure. Thanks ===)
--    AC_MSG_ERROR(aborted.)
+-  AC_MSG_WARN(=== vpopmail must be configured as root. ===)
+-  AC_MSG_WARN(=== please switch to the root user and  ===)
+-  AC_MSG_WARN(=== run ./configure. Thanks ===)
+-  AC_MSG_ERROR(aborted.)
 -fi
 -
+-#----------------------------------------------------------------------
+-
+ if test "$GCC" = yes ; then
+   CXXFLAGS="$CXXFLAGS -Wall"
+   CFLAGS="$CFLAGS -Wall"
+@@ -211,17 +201,6 @@
+ 
+ #----------------------------------------------------------------------
+ 
+-if test ! -d $vpopmaildir/etc
+-then
+-  mkdir $vpopmaildir/etc
+-  chown $vpopmailuid "$vpopmaildir"/etc
+-  chgrp $vpopmailgid "$vpopmaildir"/etc
+-  chmod 755 "$vpopmaildir"/etc
+-  AC_MSG_WARN( making a vpopmail etc directory )
+-fi
+-
+-#----------------------------------------------------------------------
+-
+ AC_MSG_CHECKING(whether we can locate the qmail directory)
  qmaildir=""
  for f in /var/qmail
- do
-@@ -154,99 +146,18 @@
-         fi
-     ] )
- AC_DEFINE_UNQUOTED(VPOPGROUP,"$vpopgroup")
--AC_SUBST(vpopgroup)
+@@ -385,89 +364,15 @@
+ AC_DEFINE_UNQUOTED(VPOPGROUP,"$vpopgroup","")
+ AC_SUBST(vpopgroup)
+ 
+-AC_MSG_RESULT(yes)
 -
+-AC_MSG_CHECKING(whether password file entry for the vpopmail user exists)
 -AC_TRY_RUN( [
+-  #include <stdio.h>
+-  #include <pwd.h>
+-  #include <stdlib.h>
 -
--#include <stdio.h>
--#include <pwd.h>
--#include <stdlib.h>
+-  int main() {
+-    struct passwd *pw;
+-    char tmpbuf[100];
+-    FILE *f;
 -
--int main()
--{
--struct passwd *pw;
--char tmpbuf[100];
--FILE *f;
--
--	unlink("vpopmail.dir");
--	unlink("vpopmail.uid");
--	unlink("vpopmail.gid");
+-        unlink("vpopmail.dir");
+-        unlink("vpopmail.uid");
+-        unlink("vpopmail.gid");
 -
 -        if ( (f=fopen("vpopusername","r+"))==NULL) {
--		printf("No vpopmail user found.\n");
--		printf("Please add the vchkpw group and\n");
--		printf("vpopmail user. Then run configure again\n");
--                return(0);
--	}
+-                printf("No vpopmail user found.\n");
+-                printf("Please add the vchkpw group and\n");
+-                printf("vpopmail user. Then run configure again\n");
+-                return(-1);
+-        }
 -
 -        fgets(tmpbuf,100,f);
 -        fclose(f);
 -        tmpbuf[strlen(tmpbuf)-1] = 0;
 -
--	if (( pw=getpwnam(tmpbuf)) != 0 ) {
--		f=fopen("vpopmail.dir","a+");
--		fprintf(f,"%s\n", pw->pw_dir);
--		fclose(f);
+-        if (( pw=getpwnam(tmpbuf)) != 0 ) {
+-                f=fopen("vpopmail.dir","a+");
+-                fprintf(f,"%s\n", pw->pw_dir);
+-                fclose(f);
 -
--		f=fopen("vpopmail.uid", "a+");
--		fprintf(f,"%d\n", pw->pw_uid);
--		fclose(f);
+-                f=fopen("vpopmail.uid", "a+");
+-                fprintf(f,"%d\n", pw->pw_uid);
+-                fclose(f);
 -
--		f=fopen("vpopmail.gid", "a+");
--		fprintf(f,"%d\n", pw->pw_gid);
--		fclose(f);
--	} else {
--		printf("No vpopmail user found.\n");
--		printf("Please add the vchkpw group and\n");
--		printf("vpopmail user. Then run configure again\n");
--	}
--	return(0);
--}
--],
+-                f=fopen("vpopmail.gid", "a+");
+-                fprintf(f,"%d\n", pw->pw_gid);
+-                fclose(f);
+-        } else {
+-                printf("No vpopmail user found.\n");
+-                printf("Please add the vchkpw group and\n");
+-                printf("vpopmail user. Then run configure again\n");
+-                return(-1);
+-        }
+-        return(0);
+-  }
+-  ],
 -    AC_MSG_RESULT(yes),
 -    AC_MSG_RESULT(no)
 -    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check CC.),
--    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check CC.))
+-    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check CC.)
+-)
 -
 -if test ! -f vpopmail.uid
 -then
 -        AC_MSG_ERROR(No vpopmail user.)
 -fi
- 
+-
 -if test ! -f vpopmail.gid
 -then
 -        AC_MSG_ERROR(No vpopmail group.)
@@ -85,86 +106,39 @@
 -
 -if test ! -f vpopmail.dir
 -then
--        AC_MSG_ERROR(No vpopmail home directory user.)
+-        AC_MSG_ERROR(No vpopmail home directory)
 -fi
 -
 -vpopmaildir=`cat vpopmail.dir`
 +vpopmaildir="/var/lib/vpopmail"
  AC_SUBST(vpopmaildir)
- AC_DEFINE_UNQUOTED(VPOPMAILDIR,"$vpopmaildir")
+ AC_DEFINE_UNQUOTED(VPOPMAILDIR,"$vpopmaildir","")
 -rm -f vpopmail.dir
  
 -vpopmailuid=`cat vpopmail.uid`
-+vpopmailuid="70"
- AC_DEFINE_UNQUOTED(VPOPMAILUID,$vpopmailuid)
++vpopmailuid="121"
+ AC_DEFINE_UNQUOTED(VPOPMAILUID,$vpopmailuid,"")
 -rm -f vpopmail.uid
  
 -vpopmailgid=`cat vpopmail.gid`
-+vpopmailgid="70"
- AC_DEFINE_UNQUOTED(VPOPMAILGID,$vpopmailgid)
++vpopmailgid="121"
+ AC_DEFINE_UNQUOTED(VPOPMAILGID,$vpopmailgid,"")
 -rm -f vpopmail.gid
--rm -f vpopusername 
+-rm -f vpopusername
  
+ #----------------------------------------------------------------------
  
--if test ! -d $vpopmaildir/etc
--then 
--	mkdir $vpopmaildir/etc
--	chown $vpopmailuid "$vpopmaildir"/etc 
--	chgrp $vpopmailgid "$vpopmaildir"/etc 
--        chmod 755 "$vpopmaildir"/etc
--        AC_MSG_WARN( making a vpopmail etc directory )
--fi
--
- AC_ARG_ENABLE(roaming-users,
-         [  --enable-roaming-users=n|y   Enable or disable open relay after pop authentication. Default is no],
-         POPRELAY=$enableval,
-@@ -294,11 +205,11 @@
-     [
-         if test "$tcpserver_file" = ""
-         then
--	    echo "127.:allow,RELAYCLIENT=\"\"" > "$vpopmaildir"/etc/tcp.smtp
--    	    tcpserver_file="$vpopmaildir"/etc/tcp.smtp
-+	    echo "127.:allow,RELAYCLIENT=\"\"" > ./tcp.smtp
-+    	    tcpserver_file="./tcp.smtp"
- 	
-             AC_MSG_WARN([Unable to find your tcpserver relay file.])
--            AC_MSG_WARN([Creating tcp.smtp in "$vpopmaildir"/etc/tcp.smtp.])
-+            AC_MSG_WARN([Creating tcp.smtp in ./tcp.smtp.])
-         fi
-     ] )
- AC_DEFINE_UNQUOTED(TCP_FILE,"$tcpserver_file")
-@@ -540,7 +451,7 @@
-         fi
- 		auth_libs="-L$libdir $extralibflags -lmysqlclient -lz"
+@@ -536,10 +441,10 @@
+             if test "$tcpserver_file" = ""
+             then
+                 AC_MSG_WARN([Unable to find your tcpserver relay file.])
+-                AC_MSG_WARN([Creating tcp.smtp in "$vpopmaildir"/etc/tcp.smtp.])
++                AC_MSG_WARN([Creating tcp.smtp in ./tcp.smtp.])
  
--		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lmysqlclient -lz" > $vpopmaildir/etc/lib_deps
-+		echo "-L/usr/lib -lvpopmail -L$libdir -lmysqlclient -lz" > ./lib_deps
- 		AC_SUBST(auth_libs)
-         ;;
- *)
-@@ -657,7 +568,7 @@
- 		AC_SUBST(auth_libs)
- 		auth_inc="-I/usr/local/include"
- 		AC_SUBST(auth_inc)
--		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > $vpopmaildir/etc/lib_deps
-+		echo "-L/usr/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > ./lib_deps
-         ;;
- *)
-         ;;
-@@ -717,14 +628,14 @@
- 		authlib=
- 		AC_SUBST(authlib)
- 		auth_inc="-Icdb"
--		echo "-L$vpopmaildir/lib -lvpopmail" > $vpopmaildir/etc/lib_deps
-+		echo "-L$vpopmaildir/lib -lvpopmail" > ./lib_deps
- 		AC_SUBST(auth_inc)
-         ;;
- *)
-         ;;
- esac
- 
--echo "-I$vpopmaildir/include" > $vpopmaildir/etc/inc_deps
-+echo "-I$vpopmaildir/include" > ./inc_deps
- 
- AC_ARG_ENABLE(qmail-ext,
-         [  --enable-qmail-ext=y|n   enable qmail email address extensions (default no). ],
+-                echo "127.:allow,RELAYCLIENT=\"\"" > "$vpopmaildir"/etc/tcp.smtp
+-                tcpserver_file="$vpopmaildir"/etc/tcp.smtp
++                echo "127.:allow,RELAYCLIENT=\"\"" > ./tcp.smtp
++                tcpserver_file="./tcp.smtp"
+             fi
+         ]
+     )
