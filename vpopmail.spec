@@ -14,6 +14,7 @@ Release:	0.01
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
+# Source0-md5:	fa7c7d46c673da7e955311d618f6302e
 Patch0:		%{name}-nonroot.patch
 URL:		http://inter7.com/vpopmail/
 %{!?_without_mysql:BuildRequires:       mysql-devel}
