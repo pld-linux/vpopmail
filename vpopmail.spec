@@ -92,7 +92,7 @@ Ten pakiet zawiera pliki nag³ówkowe biblioteki vpopmail.
 	%{?with_ucspi:--enable-roaming-users=y} \
 	%{?with_sqweb:--enable-sqwebmail-pass=y} \
 	%{?with_ldap:--enable-ldap=y} \
-	%{?with_mysql:--enable-mysql=y} \
+	%{?with_mysql:--enable-auth-module=mysql=y} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
 	--enable-clear-passwd=n \
