@@ -1,36 +1,41 @@
---- vpopmail-5.3.3/configure.in.orig	2004-01-13 23:17:09.000000000 +0100
-+++ vpopmail-5.3.3/configure.in	2004-01-13 23:19:31.000000000 +0100
-@@ -69,11 +69,6 @@
-         fi
-     ] )
+--- vpopmail-5.4.0-rc1/configure.in.orig	Thu Jan 15 12:05:45 2004
++++ vpopmail-5.4.0-rc1/configure.in	Thu Jan 15 12:07:54 2004
+@@ -251,12 +251,6 @@
+     ]
+ )
  
 -if test ! -f "$qmailnewu"
 -then
+-    AC_MSG_RESULT(no)
 -    AC_MSG_ERROR([Unable to find your qmail-newu file, specify --enable-qmail-newu=/full/path/to/qmail-newu])
 -fi
 -
- AC_DEFINE_UNQUOTED(QMAILNEWU,"$qmailnewu")
+ AC_MSG_RESULT(yes)
+ AC_DEFINE_UNQUOTED(QMAILNEWU,"$qmailnewu","")
  
- qmailinject=""
-@@ -92,10 +87,6 @@
-             AC_MSG_ERROR([Unable to find your qmailinject file, specify --enable-qmail-inject.])
-         fi
-     ] )
+@@ -285,12 +279,6 @@
+     ]
+ )
+ 
 -if test ! -f "$qmailinject"
 -then
+-    AC_MSG_RESULT(no)
 -    AC_MSG_ERROR([Unable to find your qmail-inject file, specify --enable-qmail-inject=/full/path/to/qmail-inject])
 -fi
+-
+ AC_MSG_RESULT(yes)
+ AC_DEFINE_UNQUOTED(QMAILINJECT,"$qmailinject","")
  
- AC_DEFINE_UNQUOTED(QMAILINJECT,"$qmailinject")
+@@ -319,12 +307,6 @@
+     ]
+ )
  
-@@ -115,10 +106,6 @@
-             AC_MSG_ERROR([Unable to find your qmail-newmrh file, specify --enable-qmail-newmrh.])
-         fi
-     ] )
 -if test ! -f "$qmailnewmrh"
 -then
+-    AC_MSG_RESULT(no)
 -    AC_MSG_ERROR([Unable to find your qmail-newmrh file, specify --enable-qmail-qmail-newmrh=/full/path/to/qmail-newmrh])
 -fi
- 
- AC_DEFINE_UNQUOTED(QMAILNEWMRH,"$qmailnewmrh")
+-
+ AC_MSG_RESULT(yes)
+ AC_DEFINE_UNQUOTED(QMAILNEWMRH,"$qmailnewmrh","")
  
