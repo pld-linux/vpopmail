@@ -89,7 +89,7 @@
 -fi
 -
 -vpopmaildir=`cat vpopmail.dir`
-+vpopmaildir="/var/vpopmail"
++vpopmaildir="/var/lib/vpopmail"
  AC_SUBST(vpopmaildir)
  AC_DEFINE_UNQUOTED(VPOPMAILDIR,"$vpopmaildir")
 -rm -f vpopmail.dir
