@@ -38,17 +38,6 @@ vpopmail to kolekcja programów s³u¿±cych automatyzacji tworzenia
 i zarz±dzania kontami pocztowymi w domenach wirtualnych, odrêbnych
 od hase³ sk³adowanych w pliku /etc/passwd
 
-%package libs
-Summary:        vpopmail libraries
-Summary(pl):    Biblioteki vpopmail
-Group:          Libraries
-
-%description libs
-vpopmail libraries
-
-%description libs -l pl
-Biblioteki vpopmail
-
 %package devel
 Summary:        Vpopmail development includes
 Summary(pl):    Pliki nag³ówkowe bibliotek vpopmail
@@ -99,11 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{dest}/domains\
 	   %{!?_without_ucspi: $RPM_BUILD_ROOT/etc/vpopmail/} \
 	   $RPM_BUILD_ROOT%{_sbindir} \
-	   $RPM_BUILD_ROOT%{_libdir} \
 	   $RPM_BUILD_ROOT%{_includedir}/vpopmail \
 	   $RPM_BUILD_ROOT%{_docdir}
 
-install libvpopmail.a	$RPM_BUILD_ROOT%{_libdir}
 install vpopmail.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail
 install config.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail
 install config.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail/vpopmail_config.h
@@ -161,6 +148,3 @@ fi
 
 %files devel
 %{_includedir}/vpopmail/*
-
-%files libs
-%{_libdir}/*
