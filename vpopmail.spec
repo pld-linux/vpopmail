@@ -2,6 +2,8 @@
 # for tests
 
 %define		_without_ldap	1
+%define		_without_mysql  1
+%define		_without_ucspi	1
 
 Summary:	virtual domains for qmail
 Summary(pl):	domeny wirtualne dla qmaila
@@ -95,7 +97,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 install -d $RPM_BUILD_ROOT%{dest}/domains\
-	   $RPM_BUILD_ROOT/etc/vpopmail/ \
+	   %{!?_without_ucspi: $RPM_BUILD_ROOT/etc/vpopmail/} \
 	   $RPM_BUILD_ROOT%{_sbindir} \
 	   $RPM_BUILD_ROOT%{_libdir} \
 	   $RPM_BUILD_ROOT%{_includedir}/vpopmail \
@@ -146,7 +148,7 @@ if [ "$1" = "0" ]; then
         echo "Removing user vpopmail."
         %{_sbindir}/userdel vpopmail
         echo "Removing group vpopmail."
-        %{_sbindir}/groupdel vpopmail
+        %{_sbindir}/groupdel vchkpw
 fi
 
 
@@ -154,7 +156,8 @@ fi
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog FAQ NEWS TODO UPGRADE UPGRADE.tren README.* doc/doc_html doc/man_html ldap oracle
 %attr(755,vpopmail,vchkpw) %{_sbindir}/*
-%{dest}/domains
+%attr(700,vpopmail,vchkpw) %dir %{dest}/domains
+%{!?_without_ucspi: %attr(700,vpopmail,vchkpw) %dir /etc/vpopmail}
 
 %files devel
 %{_includedir}/vpopmail/*
