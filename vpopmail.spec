@@ -1,6 +1,7 @@
+# TODO: uid/gid 70 are reserved for other purposes (uid_gid.db.txt)
+#       update (at least 5.3.4 was available some time ago)
 
 # for tests
-
 %define		_without_ldap	1
 %define		_without_mysql  1
 %define		_without_ucspi	1
@@ -15,17 +16,21 @@ Group:		Networking/Daemons
 Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
 Patch0:		%{name}-nonroot.patch
 URL:		http://inter7.com/vpopmail/
+%{!?_without_mysql:BuildRequires:       mysql-devel}
+%{!?_without_ldap:BuildRequires:	openldap-devel}
+BuildRequires:	qmail >= 1.03
+%{!?_without_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
 Requires(pre):  /usr/sbin/groupadd
 Requires(pre):  /usr/sbin/useradd
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	/usr/sbin/groupdel
+%{!?_without_ldap:Requires:	openldap}
 Requires:	qmail >= 1.03
 Requires:	qmail-pop3d
 %{!?_without_sqweb:Requires:	sqwebmail >= 3.0}
 %{!?_without_ucspi:Requires:	ucspi-tcp >= 0.88}
-%{!?_without_ldap:Requires:	openldap}
-BuildRequires:	qmail >= 1.03
-%{!?_without_tcpd:BuildRequires:	ucspi-tcp >= 0.88}
-%{!?_without_mysql:BuildRequires:       mysql-devel}
-%{!?_without_ldap:BuildRequires:	openldap-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -103,8 +108,6 @@ install vchkpw vdelivermail clearopensmtp vadddomain \
 
 #install $RPM_BUILD_ROOT%{dest}/domains
 
-
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -128,23 +131,22 @@ else
         /usr/sbin/useradd -u 70 -g 70 -d /dev/null -s /bin/false -c "VPOPMAIL user" vpopmail || exit 1
 fi
 
-%post
-
 %postun
 if [ "$1" = "0" ]; then
         echo "Removing user vpopmail."
-        %{_sbindir}/userdel vpopmail
+        /usr/sbin/userdel vpopmail
         echo "Removing group vpopmail."
-        %{_sbindir}/groupdel vchkpw
+        /usr/sbin/groupdel vchkpw
 fi
-
 
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog FAQ NEWS TODO UPGRADE UPGRADE.tren README.* doc/doc_html doc/man_html ldap oracle
 %attr(755,vpopmail,vchkpw) %{_sbindir}/*
+%dir %{dest}
 %attr(700,vpopmail,vchkpw) %dir %{dest}/domains
 %{!?_without_ucspi: %attr(700,vpopmail,vchkpw) %dir /etc/vpopmail}
 
 %files devel
-%{_includedir}/vpopmail/*
+%defattr(644,root,root,755)
+%{_includedir}/vpopmail
