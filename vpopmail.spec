@@ -80,7 +80,7 @@ Pakiet zawiera pliki nag³ówkowe.
 	--enable-qmail-ext=y \
 	--enable-defaultquota=100000 \
 	%{!?_without_ucspi:--enable-tcpserver-file=/etc/vpopmail/tcp.smtp} \
-	--enable-libdir=/usr/lib 
+	--enable-libdir=/usr/lib
 %{__make}
 
 %install
