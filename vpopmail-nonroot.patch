@@ -1,5 +1,5 @@
 --- vpopmail-5.3.3/configure.in.orig	Tue Mar  4 18:16:22 2003
-+++ vpopmail-5.3.3/configure.in	Tue Mar  4 19:36:13 2003
++++ vpopmail-5.3.3/configure.in	Wed Mar  5 17:05:28 2003
 @@ -33,14 +33,6 @@
    ;;
  esac
@@ -15,8 +15,95 @@
  qmaildir=""
  for f in /var/qmail
  do
-@@ -238,15 +230,6 @@
- rm -f vpopusername 
+@@ -154,99 +146,18 @@
+         fi
+     ] )
+ AC_DEFINE_UNQUOTED(VPOPGROUP,"$vpopgroup")
+-AC_SUBST(vpopgroup)
+-
+-AC_TRY_RUN( [
+-
+-#include <stdio.h>
+-#include <pwd.h>
+-#include <stdlib.h>
+-
+-int main()
+-{
+-struct passwd *pw;
+-char tmpbuf[100];
+-FILE *f;
+-
+-	unlink("vpopmail.dir");
+-	unlink("vpopmail.uid");
+-	unlink("vpopmail.gid");
+-
+-        if ( (f=fopen("vpopusername","r+"))==NULL) {
+-		printf("No vpopmail user found.\n");
+-		printf("Please add the vchkpw group and\n");
+-		printf("vpopmail user. Then run configure again\n");
+-                return(0);
+-	}
+-
+-        fgets(tmpbuf,100,f);
+-        fclose(f);
+-        tmpbuf[strlen(tmpbuf)-1] = 0;
+-
+-	if (( pw=getpwnam(tmpbuf)) != 0 ) {
+-		f=fopen("vpopmail.dir","a+");
+-		fprintf(f,"%s\n", pw->pw_dir);
+-		fclose(f);
+-
+-		f=fopen("vpopmail.uid", "a+");
+-		fprintf(f,"%d\n", pw->pw_uid);
+-		fclose(f);
+-
+-		f=fopen("vpopmail.gid", "a+");
+-		fprintf(f,"%d\n", pw->pw_gid);
+-		fclose(f);
+-	} else {
+-		printf("No vpopmail user found.\n");
+-		printf("Please add the vchkpw group and\n");
+-		printf("vpopmail user. Then run configure again\n");
+-	}
+-	return(0);
+-}
+-],
+-    AC_MSG_RESULT(yes),
+-    AC_MSG_RESULT(no)
+-    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check CC.),
+-    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check CC.))
+-
+-if test ! -f vpopmail.uid
+-then
+-        AC_MSG_ERROR(No vpopmail user.)
+-fi
+ 
+-if test ! -f vpopmail.gid
+-then
+-        AC_MSG_ERROR(No vpopmail group.)
+-fi
+-
+-if test ! -f vpopmail.dir
+-then
+-        AC_MSG_ERROR(No vpopmail home directory user.)
+-fi
+-
+-vpopmaildir=`cat vpopmail.dir`
++vpopmaildir="/var/vpopmail"
+ AC_SUBST(vpopmaildir)
+ AC_DEFINE_UNQUOTED(VPOPMAILDIR,"$vpopmaildir")
+-rm -f vpopmail.dir
+ 
+-vpopmailuid=`cat vpopmail.uid`
++vpopmailuid="70"
+ AC_DEFINE_UNQUOTED(VPOPMAILUID,$vpopmailuid)
+-rm -f vpopmail.uid
+ 
+-vpopmailgid=`cat vpopmail.gid`
++vpopmailgid="70"
+ AC_DEFINE_UNQUOTED(VPOPMAILGID,$vpopmailgid)
+-rm -f vpopmail.gid
+-rm -f vpopusername 
  
  
 -if test ! -d $vpopmaildir/etc
@@ -31,7 +118,7 @@
  AC_ARG_ENABLE(roaming-users,
          [  --enable-roaming-users=n|y   Enable or disable open relay after pop authentication. Default is no],
          POPRELAY=$enableval,
-@@ -294,11 +277,11 @@
+@@ -294,11 +205,11 @@
      [
          if test "$tcpserver_file" = ""
          then
@@ -46,25 +133,25 @@
          fi
      ] )
  AC_DEFINE_UNQUOTED(TCP_FILE,"$tcpserver_file")
-@@ -540,7 +523,7 @@
+@@ -540,7 +451,7 @@
          fi
  		auth_libs="-L$libdir $extralibflags -lmysqlclient -lz"
  
 -		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lmysqlclient -lz" > $vpopmaildir/etc/lib_deps
-+		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lmysqlclient -lz" > ./lib_deps
++		echo "-L/usr/lib -lvpopmail -L$libdir -lmysqlclient -lz" > ./lib_deps
  		AC_SUBST(auth_libs)
          ;;
  *)
-@@ -657,7 +640,7 @@
+@@ -657,7 +568,7 @@
  		AC_SUBST(auth_libs)
  		auth_inc="-I/usr/local/include"
  		AC_SUBST(auth_inc)
 -		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > $vpopmaildir/etc/lib_deps
-+		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > ./lib_deps
++		echo "-L/usr/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > ./lib_deps
          ;;
  *)
          ;;
-@@ -717,14 +700,14 @@
+@@ -717,14 +628,14 @@
  		authlib=
  		AC_SUBST(authlib)
  		auth_inc="-Icdb"
