@@ -1,13 +1,15 @@
 # TODO: uid/gid 70 are reserved for other purposes (uid_gid.db.txt)
 #       update (at least 5.3.4 was available some time ago)
 
-# for tests
-%define		_without_ldap	1
-%define		_without_mysql  1
-%define		_without_ucspi	1
+# TODO: give them some descriptive comments
+%bcond_with ldap
+%bcond_with mysql
+%bcond_without sqweb
+%bcond_with ucspi
 
-Summary:	virtual domains for qmail
-Summary(pl):	domeny wirtualne dla qmaila
+Summary:	Virtual domains for qmail
+Summary(es):	Dominios virtuales para qmail
+Summary(pl):	Domeny wirtualne dla qmaila
 Name:		vpopmail
 Version:	5.3.3
 Release:	0.01
@@ -16,44 +18,54 @@ Group:		Networking/Daemons
 Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
 # Source0-md5:	fa7c7d46c673da7e955311d618f6302e
 Patch0:		%{name}-nonroot.patch
+Patch1:		%{name}-vmysql.patch
 URL:		http://inter7.com/vpopmail/
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{!?_without_mysql:BuildRequires:	mysql-devel}
-%{!?_without_ldap:BuildRequires:	openldap-devel}
+%{?with_mysql:BuildRequires:	mysql-devel}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	qmail >= 1.03
-%{!?_without_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
+%{?with_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
-%{!?_without_ldap:Requires:	openldap}
+%{?with_ldap:Requires:	openldap}
 Requires:	qmail >= 1.03
-Requires:	qmail-pop3d
-%{!?_without_sqweb:Requires:	sqwebmail >= 3.0}
-%{!?_without_ucspi:Requires:	ucspi-tcp >= 0.88}
+Requires:	qmail-pop3
+%{?with_sqweb:Requires:	sqwebmail >= 3.0}
+%{?with_ucspi:Requires:	ucspi-tcp >= 0.88}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 vpopmail is a collection of programs to automate creation and
-maintence of non /etc/passwd virutal domain email and pop accounts
+maintence of non /etc/passwd virtual domain email and POP accounts
 for qmail installations.
+
+%description -l es
+vpopmail es una colección de programas para automatizar la creación
+y el mantenimiento de dominios virtuales de E-mail y cuentas POP
+independientes de /etc/passwd.
 
 %description -l pl
 vpopmail to kolekcja programów s³u¿±cych automatyzacji tworzenia
 i zarz±dzania kontami pocztowymi w domenach wirtualnych, odrêbnych
-od hase³ sk³adowanych w pliku /etc/passwd
+od hase³ sk³adowanych w pliku /etc/passwd.
 
 %package devel
 Summary:	Vpopmail development includes
+Summary(es):	Ficheros de desarrollo de vpopmail
 Summary(pl):	Pliki nag³ówkowe bibliotek vpopmail
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}
 
 %description devel
 The vpopmail package contains all the include files.
+
+%description devel -l es
+El paquete vpopmail contiene todos los ficheros de inclusión.
 
 %description devel -l pl
 Pakiet zawiera pliki nag³ówkowe.
@@ -63,6 +75,7 @@ Pakiet zawiera pliki nag³ówkowe.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__aclocal}
@@ -70,10 +83,10 @@ Pakiet zawiera pliki nag³ówkowe.
 %{__automake}
 %configure \
 	--prefix=%{dest} \
-	%{!?_without_ucspi:--enable-roaming-users=y} \
-	%{!?_without_sqweb:--enable-sqwebmail-pass=y} \
-	%{!?_without_ldap:--enable-ldap=y} \
-	%{!?_without_mysql:--enable-mysql=y} \
+	%{?with_ucspi:--enable-roaming-users=y} \
+	%{?with_sqweb:--enable-sqwebmail-pass=y} \
+	%{?with_ldap:--enable-ldap=y} \
+	%{?with_mysql:--enable-mysql=y} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
 	--enable-clear-passwd=n \
@@ -81,7 +94,7 @@ Pakiet zawiera pliki nag³ówkowe.
 	--enable-log-name=vpopmail \
 	--enable-qmail-ext=y \
 	--enable-defaultquota=100000 \
-	%{!?_without_ucspi:--enable-tcpserver-file=/etc/vpopmail/tcp.smtp} \
+	%{?with_ucspi:--enable-tcpserver-file=/etc/vpopmail/tcp.smtp} \
 	--enable-libdir=/usr/lib
 %{__make}
 
@@ -92,7 +105,7 @@ rm -rf $RPM_BUILD_ROOT
 #        DESTDIR=$RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT%{dest}/domains\
-	   %{!?_without_ucspi: $RPM_BUILD_ROOT/etc/vpopmail/} \
+	   %{?with_ucspi:$RPM_BUILD_ROOT/etc/vpopmail/} \
 	   $RPM_BUILD_ROOT%{_sbindir} \
 	   $RPM_BUILD_ROOT%{_includedir}/vpopmail \
 	   $RPM_BUILD_ROOT%{_docdir}
@@ -146,7 +159,7 @@ fi
 %attr(755,vpopmail,vchkpw) %{_sbindir}/*
 %dir %{dest}
 %attr(700,vpopmail,vchkpw) %dir %{dest}/domains
-%{!?_without_ucspi: %attr(700,vpopmail,vchkpw) %dir /etc/vpopmail}
+%{?with_ucspi: %attr(700,vpopmail,vchkpw) %dir /etc/vpopmail}
 
 %files devel
 %defattr(644,root,root,755)
