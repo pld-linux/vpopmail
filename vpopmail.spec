@@ -12,19 +12,19 @@ Summary(es):	Dominios virtuales para qmail
 Summary(pl):	Domeny wirtualne dla qmaila
 Name:		vpopmail
 Version:	5.3.3
-Release:	0.01
+Release:	0.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
 # Source0-md5:	fa7c7d46c673da7e955311d618f6302e
 Patch0:		%{name}-nonroot.patch
 Patch1:		%{name}-vmysql.patch
+Patch2:		%{name}-missing-qmail.patch
 URL:		http://inter7.com/vpopmail/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	qmail >= 1.03
 %{?with_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
@@ -38,6 +38,8 @@ Requires:	qmail-pop3
 %{?with_sqweb:Requires:	sqwebmail >= 3.0}
 %{?with_ucspi:Requires:	ucspi-tcp >= 0.88}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define	varqmail	/var/qmail
 
 %description
 vpopmail is a collection of programs to automate creation and
@@ -59,7 +61,7 @@ Summary:	Vpopmail development includes
 Summary(es):	Ficheros de desarrollo de vpopmail
 Summary(pl):	Pliki nag³ówkowe bibliotek vpopmail
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}
+#Requires:	%{name}-libs = %{version}
 
 %description devel
 The vpopmail package contains all the include files.
@@ -76,6 +78,7 @@ Pakiet zawiera pliki nag³ówkowe.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__aclocal}
@@ -83,6 +86,10 @@ Pakiet zawiera pliki nag³ówkowe.
 %{__automake}
 %configure \
 	--prefix=%{dest} \
+	--enable-qmaildir=%{varqmail} \
+	--enable-qmail-newu=%{varqmail}/bin/qmail-newu \
+	--enable-qmail-inject=%{varqmail}/bin/qmail-inject \
+	--enable-qmail-newmrh=%{varqmail}/bin/qmail-newmrh \
 	%{?with_ucspi:--enable-roaming-users=y} \
 	%{?with_sqweb:--enable-sqwebmail-pass=y} \
 	%{?with_ldap:--enable-ldap=y} \
@@ -108,7 +115,7 @@ install -d $RPM_BUILD_ROOT%{dest}/domains\
 	   %{?with_ucspi:$RPM_BUILD_ROOT/etc/vpopmail/} \
 	   $RPM_BUILD_ROOT%{_sbindir} \
 	   $RPM_BUILD_ROOT%{_includedir}/vpopmail \
-	   $RPM_BUILD_ROOT%{_docdir}
+	   $RPM_BUILD_ROOT{%{_docdir},%{_libdir}}
 
 install vpopmail.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail
 install config.h	$RPM_BUILD_ROOT%{_includedir}/vpopmail
@@ -120,6 +127,7 @@ install vchkpw vdelivermail clearopensmtp vadddomain \
 	vdominfo vconvert vqmaillocal vkill \
 	$RPM_BUILD_ROOT%{_sbindir}
 
+install libvpopmail.a $RPM_BUILD_ROOT%{_libdir}
 #install $RPM_BUILD_ROOT%{dest}/domains
 
 %clean
@@ -164,3 +172,4 @@ fi
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/vpopmail
+%attr(755,root,root) %{_libdir}/libvpopmail.a
