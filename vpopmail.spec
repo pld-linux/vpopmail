@@ -1,3 +1,8 @@
+
+# for tests
+
+%define		_without_ldap	1
+
 Summary:	virtual domains for qmail
 Summary(pl):	domeny wirtualne dla qmaila
 Name:		vpopmail
@@ -11,8 +16,9 @@ URL:		http://inter7.com/vpopmail/
 Requires(pre):  /usr/sbin/groupadd
 Requires(pre):  /usr/sbin/useradd
 Requires:	qmail >= 1.03
+Requires:	qmail-pop3d
 %{!?_without_sqweb:Requires:	sqwebmail >= 3.0}
-%{!?_without_tcpd:Requires:	ucspi-tcp >= 0.88}
+%{!?_without_ucspi:Requires:	ucspi-tcp >= 0.88}
 %{!?_without_ldap:Requires:	openldap}
 BuildRequires:	qmail >= 1.03
 %{!?_without_tcpd:BuildRequires:	ucspi-tcp >= 0.88}
@@ -54,7 +60,6 @@ The vpopmail package contains all the include files.
 Pakiet zawiera pliki nag³ówkowe.
 
 %define         dest		/var/lib/vpopmail
-%define		domaindir	%{dest}
 
 %prep
 %setup -q
@@ -66,7 +71,7 @@ Pakiet zawiera pliki nag³ówkowe.
 %{__automake}
 %configure \
 	--prefix=%{dest} \
-%{!?_without_tcpd:  --enable-roaming-users=y} \
+%{!?_without_ucspi:  --enable-roaming-users=y} \
 %{!?_without_sqweb: --enable-sqwebmail-pass=y} \
 %{!?_without_ldap:  --enable-ldap=y} \
 %{!?_without_mysql: --enable-mysql=y} \
@@ -77,7 +82,8 @@ Pakiet zawiera pliki nag³ówkowe.
 	--enable-log-name=vpopmail \
 	--enable-qmail-ext=y \
 	--enable-defaultquota=100000 \
-	--enable-libdir=/usr/lib
+%{!?_without_ucspi: --enable-tcpserver-file=/etc/vpopmail/tcp.smtp} \
+	--enable-libdir=/usr/lib 
 	
 %{__make}
 
@@ -89,6 +95,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 install -d $RPM_BUILD_ROOT%{dest}/domains\
+	   $RPM_BUILD_ROOT/etc/vpopmail/ \
 	   $RPM_BUILD_ROOT%{_sbindir} \
 	   $RPM_BUILD_ROOT%{_libdir} \
 	   $RPM_BUILD_ROOT%{_includedir}/vpopmail \
@@ -104,6 +111,8 @@ install vchkpw vdelivermail clearopensmtp vadddomain \
 	vpopbull vdeloldusers vmoduser valias vuserinfo vmkpasswd vipmap \
 	vdominfo vconvert vqmaillocal vkill \
 	$RPM_BUILD_ROOT%{_sbindir}
+
+#install $RPM_BUILD_ROOT%{dest}/domains
 
 
 
