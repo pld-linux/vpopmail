@@ -1,0 +1,83 @@
+--- vpopmail-5.3.3/configure.in.orig	Tue Mar  4 18:16:22 2003
++++ vpopmail-5.3.3/configure.in	Tue Mar  4 19:36:13 2003
+@@ -33,14 +33,6 @@
+   ;;
+ esac
+ 
+-if test `$idcommand` != "0"
+-then
+-    AC_MSG_WARN(=== vpopmail must be configured as root. ===)
+-    AC_MSG_WARN(=== please switch to the root user and  ===)
+-    AC_MSG_WARN(=== run ./configure. Thanks ===)
+-    AC_MSG_ERROR(aborted.)
+-fi
+-
+ qmaildir=""
+ for f in /var/qmail
+ do
+@@ -238,15 +230,6 @@
+ rm -f vpopusername 
+ 
+ 
+-if test ! -d $vpopmaildir/etc
+-then 
+-	mkdir $vpopmaildir/etc
+-	chown $vpopmailuid "$vpopmaildir"/etc 
+-	chgrp $vpopmailgid "$vpopmaildir"/etc 
+-        chmod 755 "$vpopmaildir"/etc
+-        AC_MSG_WARN( making a vpopmail etc directory )
+-fi
+-
+ AC_ARG_ENABLE(roaming-users,
+         [  --enable-roaming-users=n|y   Enable or disable open relay after pop authentication. Default is no],
+         POPRELAY=$enableval,
+@@ -294,11 +277,11 @@
+     [
+         if test "$tcpserver_file" = ""
+         then
+-	    echo "127.:allow,RELAYCLIENT=\"\"" > "$vpopmaildir"/etc/tcp.smtp
+-    	    tcpserver_file="$vpopmaildir"/etc/tcp.smtp
++	    echo "127.:allow,RELAYCLIENT=\"\"" > ./tcp.smtp
++    	    tcpserver_file="./tcp.smtp"
+ 	
+             AC_MSG_WARN([Unable to find your tcpserver relay file.])
+-            AC_MSG_WARN([Creating tcp.smtp in "$vpopmaildir"/etc/tcp.smtp.])
++            AC_MSG_WARN([Creating tcp.smtp in ./tcp.smtp.])
+         fi
+     ] )
+ AC_DEFINE_UNQUOTED(TCP_FILE,"$tcpserver_file")
+@@ -540,7 +523,7 @@
+         fi
+ 		auth_libs="-L$libdir $extralibflags -lmysqlclient -lz"
+ 
+-		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lmysqlclient -lz" > $vpopmaildir/etc/lib_deps
++		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lmysqlclient -lz" > ./lib_deps
+ 		AC_SUBST(auth_libs)
+         ;;
+ *)
+@@ -657,7 +640,7 @@
+ 		AC_SUBST(auth_libs)
+ 		auth_inc="-I/usr/local/include"
+ 		AC_SUBST(auth_inc)
+-		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > $vpopmaildir/etc/lib_deps
++		echo "-L$vpopmaildir/lib -lvpopmail -L$libdir -lldap -llber -lresolv" > ./lib_deps
+         ;;
+ *)
+         ;;
+@@ -717,14 +700,14 @@
+ 		authlib=
+ 		AC_SUBST(authlib)
+ 		auth_inc="-Icdb"
+-		echo "-L$vpopmaildir/lib -lvpopmail" > $vpopmaildir/etc/lib_deps
++		echo "-L$vpopmaildir/lib -lvpopmail" > ./lib_deps
+ 		AC_SUBST(auth_inc)
+         ;;
+ *)
+         ;;
+ esac
+ 
+-echo "-I$vpopmaildir/include" > $vpopmaildir/etc/inc_deps
++echo "-I$vpopmaildir/include" > ./inc_deps
+ 
+ AC_ARG_ENABLE(qmail-ext,
+         [  --enable-qmail-ext=y|n   enable qmail email address extensions (default no). ],
