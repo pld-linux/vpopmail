@@ -17,14 +17,14 @@ Source0:	http://www.inter7.com/devel/%{name}-%{version}.tar.gz
 # Source0-md5:	fa7c7d46c673da7e955311d618f6302e
 Patch0:		%{name}-nonroot.patch
 URL:		http://inter7.com/vpopmail/
-%{!?_without_mysql:BuildRequires:       mysql-devel}
+%{!?_without_mysql:BuildRequires:	mysql-devel}
 %{!?_without_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	qmail >= 1.03
 %{!?_without_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
-Requires(pre):  /usr/sbin/groupadd
-Requires(pre):  /usr/sbin/useradd
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
 Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 %{!?_without_ldap:Requires:	openldap}
@@ -45,10 +45,10 @@ i zarz±dzania kontami pocztowymi w domenach wirtualnych, odrêbnych
 od hase³ sk³adowanych w pliku /etc/passwd
 
 %package devel
-Summary:        Vpopmail development includes
-Summary(pl):    Pliki nag³ówkowe bibliotek vpopmail
-Group:          Development/Libraries
-Requires:       %{name}-libs = %{version}
+Summary:	Vpopmail development includes
+Summary(pl):	Pliki nag³ówkowe bibliotek vpopmail
+Group:		Development/Libraries
+Requires:	%{name}-libs = %{version}
 
 %description devel
 The vpopmail package contains all the include files.
@@ -68,10 +68,10 @@ Pakiet zawiera pliki nag³ówkowe.
 %{__automake}
 %configure \
 	--prefix=%{dest} \
-%{!?_without_ucspi:  --enable-roaming-users=y} \
-%{!?_without_sqweb: --enable-sqwebmail-pass=y} \
-%{!?_without_ldap:  --enable-ldap=y} \
-%{!?_without_mysql: --enable-mysql=y} \
+	%{!?_without_ucspi:--enable-roaming-users=y} \
+	%{!?_without_sqweb:--enable-sqwebmail-pass=y} \
+	%{!?_without_ldap:--enable-ldap=y} \
+	%{!?_without_mysql:--enable-mysql=y} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
 	--enable-clear-passwd=n \
@@ -79,9 +79,8 @@ Pakiet zawiera pliki nag³ówkowe.
 	--enable-log-name=vpopmail \
 	--enable-qmail-ext=y \
 	--enable-defaultquota=100000 \
-%{!?_without_ucspi: --enable-tcpserver-file=/etc/vpopmail/tcp.smtp} \
+	%{!?_without_ucspi:--enable-tcpserver-file=/etc/vpopmail/tcp.smtp} \
 	--enable-libdir=/usr/lib 
-	
 %{__make}
 
 %install
@@ -89,7 +88,6 @@ rm -rf $RPM_BUILD_ROOT
 
 #%{__make} install \
 #        DESTDIR=$RPM_BUILD_ROOT
-
 
 install -d $RPM_BUILD_ROOT%{dest}/domains\
 	   %{!?_without_ucspi: $RPM_BUILD_ROOT/etc/vpopmail/} \
@@ -114,30 +112,30 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`getgid vchkpw`" ]; then
-        if [ "`getgid vchkpw`" != "70" ]; then
-                echo "Error: group vpopmail doesn't have gid=70. Correct this before installing vpopmail." 1>&2
-                exit 1
-        fi
+	if [ "`getgid vchkpw`" != "70" ]; then
+		echo "Error: group vpopmail doesn't have gid=70. Correct this before installing vpopmail." 1>&2
+		exit 1
+	fi
 else
-        echo "Adding group vchkpw GID=70."
-        /usr/sbin/groupadd -g 70 vchkpw || exit 1
+	echo "Adding group vchkpw GID=70."
+	/usr/sbin/groupadd -g 70 vchkpw || exit 1
 fi
 if [ -n "`id -u named 2>/dev/null`" ]; then
-        if [ "`id -u vpopmail`" != "70" ]; then
-                echo "Error: user vpopmail doesn't have uid=70. Correct this before installing vpopmail." 1>&2
-                exit 1
-        fi
+	if [ "`id -u vpopmail`" != "70" ]; then
+		echo "Error: user vpopmail doesn't have uid=70. Correct this before installing vpopmail." 1>&2
+		exit 1
+	fi
 else
-        echo "Adding user vpopmail UID=70."
-        /usr/sbin/useradd -u 70 -g 70 -d /dev/null -s /bin/false -c "VPOPMAIL user" vpopmail || exit 1
+	echo "Adding user vpopmail UID=70."
+	/usr/sbin/useradd -u 70 -g 70 -d /dev/null -s /bin/false -c "VPOPMAIL user" vpopmail || exit 1
 fi
 
 %postun
 if [ "$1" = "0" ]; then
-        echo "Removing user vpopmail."
-        /usr/sbin/userdel vpopmail
-        echo "Removing group vpopmail."
-        /usr/sbin/groupdel vchkpw
+	echo "Removing user vpopmail."
+	/usr/sbin/userdel vpopmail
+	echo "Removing group vpopmail."
+	/usr/sbin/groupdel vchkpw
 fi
 
 %files
