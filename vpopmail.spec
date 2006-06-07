@@ -11,7 +11,7 @@ Summary(pl):	Domeny wirtualne dla qmaila
 Name:		vpopmail
 Version:	5.4.0
 %define	bver	rc1
-Release:	0.%{bver}.1
+Release:	0.%{bver}.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/vpopmail/%{name}-%{version}-%{bver}.tar.gz
@@ -134,7 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 %groupadd -g 121 vchkpw
-%useradd -u 121 -g 121 -d /dev/null -s /bin/false -c "VPOPMAIL user" vpopmail
+%useradd -u 121 -g 121 -d /usr/share/empty -s /bin/false -c "VPOPMAIL user" vpopmail
 
 %postun
 if [ "$1" = "0" ]; then
