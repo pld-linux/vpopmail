@@ -6,8 +6,8 @@
 %bcond_with	ucspi	# use ucspi-tcp
 #
 Summary:	Virtual domains for qmail
-Summary(es):	Dominios virtuales para qmail
-Summary(pl):	Domeny wirtualne dla qmaila
+Summary(es.UTF-8):   Dominios virtuales para qmail
+Summary(pl.UTF-8):   Domeny wirtualne dla qmaila
 Name:		vpopmail
 Version:	5.4.0
 %define	bver	rc1
@@ -48,31 +48,31 @@ vpopmail is a collection of programs to automate creation and
 maintence of non /etc/passwd virtual domain email and POP accounts
 for qmail installations.
 
-%description -l es
-vpopmail es una colecciÛn de programas para automatizar la creaciÛn
+%description -l es.UTF-8
+vpopmail es una colecci√≥n de programas para automatizar la creaci√≥n
 y el mantenimiento de dominios virtuales de E-mail y cuentas POP
 independientes de /etc/passwd.
 
-%description -l pl
-vpopmail to kolekcja programÛw s≥uø±cych automatyzacji tworzenia
-i zarz±dzania kontami pocztowymi w domenach wirtualnych, odrÍbnych
-od hase≥ sk≥adowanych w pliku /etc/passwd.
+%description -l pl.UTF-8
+vpopmail to kolekcja program√≥w s≈Çu≈ºƒÖcych automatyzacji tworzenia
+i zarzƒÖdzania kontami pocztowymi w domenach wirtualnych, odrƒôbnych
+od hase≈Ç sk≈Çadowanych w pliku /etc/passwd.
 
 %package devel
 Summary:	Vpopmail development includes
-Summary(es):	Ficheros de desarrollo de vpopmail
-Summary(pl):	Pliki nag≥Ûwkowe bibliotek vpopmail
+Summary(es.UTF-8):   Ficheros de desarrollo de vpopmail
+Summary(pl.UTF-8):   Pliki nag≈Ç√≥wkowe bibliotek vpopmail
 Group:		Development/Libraries
 #Requires:	%{name}-libs = %{version}
 
 %description devel
 This package contains header files for vpopmail library.
 
-%description devel -l es
-El paquete vpopmail contiene todos los ficheros de inclusiÛn.
+%description devel -l es.UTF-8
+El paquete vpopmail contiene todos los ficheros de inclusi√≥n.
 
-%description devel -l pl
-Ten pakiet zawiera pliki nag≥Ûwkowe biblioteki vpopmail.
+%description devel -l pl.UTF-8
+Ten pakiet zawiera pliki nag≈Ç√≥wkowe biblioteki vpopmail.
 
 %prep
 %setup -q -n %{name}-%{version}-%{bver}
