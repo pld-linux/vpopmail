@@ -6,8 +6,8 @@
 %bcond_with	ucspi	# use ucspi-tcp
 #
 Summary:	Virtual domains for qmail
-Summary(es.UTF-8):   Dominios virtuales para qmail
-Summary(pl.UTF-8):   Domeny wirtualne dla qmaila
+Summary(es.UTF-8):	Dominios virtuales para qmail
+Summary(pl.UTF-8):	Domeny wirtualne dla qmaila
 Name:		vpopmail
 Version:	5.4.0
 %define	bver	rc1
@@ -60,8 +60,8 @@ od haseł składowanych w pliku /etc/passwd.
 
 %package devel
 Summary:	Vpopmail development includes
-Summary(es.UTF-8):   Ficheros de desarrollo de vpopmail
-Summary(pl.UTF-8):   Pliki nagłówkowe bibliotek vpopmail
+Summary(es.UTF-8):	Ficheros de desarrollo de vpopmail
+Summary(pl.UTF-8):	Pliki nagłówkowe bibliotek vpopmail
 Group:		Development/Libraries
 #Requires:	%{name}-libs = %{version}
 
