@@ -22,7 +22,7 @@ URL:		http://inter7.com/vpopmail.html
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_mysql:BuildRequires:	mysql-devel}
-%{?with_ldap:BuildRequires:	openldap-devel}
+%{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
 %{?with_ucspi:BuildRequires:	ucspi-tcp >= 0.88}
 BuildRequires:	rpmbuild(macros) >= 1.202
 Requires(pre):	/bin/id
